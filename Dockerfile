@@ -27,8 +27,8 @@ RUN cd /tmp/piwik \
     && unzip -q /tmp/piwik/piwik.zip \
 	&& cp -R /tmp/piwik/piwik/* /var/www/html
 
-# @todo Inject settings file here
-#COPY src/* /var/www/html
+# Inject settings file here
+COPY config/config.ini.php /var/www/html/config/config.ini.php
 
 # -f means "don't daemonize"
 ENTRYPOINT ["/usr/sbin/httpd", "-f"]
