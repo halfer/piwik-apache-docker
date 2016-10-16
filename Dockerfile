@@ -19,7 +19,12 @@ RUN mkdir -p /tmp/piwik \
 	&& cd /tmp/piwik \
 	&& wget https://builds.piwik.org/piwik.zip
 
-RUN unzip /tmp/piwik/piwik.zip \
+# Minimise the size of the container image
+RUN apt-get clean
+
+# -q on unzip is for "quiet" operation
+RUN cd /tmp/piwik \
+    && unzip -q /tmp/piwik/piwik.zip \
 	&& cp -R /tmp/piwik/piwik/* /var/www/html
 
 # @todo Inject settings file here
