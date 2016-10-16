@@ -13,8 +13,13 @@ FROM php:7.0-apache
 
 EXPOSE 80
 
+# Install basic machine dependencies
 RUN apt-get update && apt-get install -y wget unzip
 
+# Install the required PHP modules using PHP's Docker command
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Grab Piwik itself
 RUN mkdir -p /tmp/piwik \
 	&& cd /tmp/piwik \
 	&& wget https://builds.piwik.org/piwik.zip
