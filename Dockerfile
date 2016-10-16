@@ -1,3 +1,14 @@
+# Apache + PHP + Piwik
+#
+# The original intention of this Docker file was to use Alpine, but getting everything running
+# happily on that seems to be a fair bit of work. Instead one perhaps could use this
+# https://github.com/nimmis/docker-alpine-apache-php7 but it is not well-used, so caution may
+# be necessary.
+#
+# Alternatively I could look at the official Piwik image (https://github.com/piwik/docker-piwik)
+# but this needs an NginX front end and MySQL in separate containers, so I think swapping to
+# a more substantial base would be best for now.
+
 FROM php:7.0-fpm-alpine
 
 EXPOSE 80
