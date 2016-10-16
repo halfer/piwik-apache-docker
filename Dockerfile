@@ -39,6 +39,6 @@ COPY config/config.ini.php /var/www/html/config/config.ini.php
 RUN chown -R www-data:www-data /var/www/html \
 	&& chmod -R 0755 /var/www/html/tmp
 
-COPY start.sh /root/start.sh
-RUN chmod u+x /root/start.sh
-ENTRYPOINT ["/root/start.sh"]
+COPY container-start.sh /root/container-start.sh
+RUN chmod u+x /root/container-start.sh
+ENTRYPOINT ["/root/container-start.sh"]
