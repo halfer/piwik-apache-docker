@@ -30,6 +30,10 @@ RUN cd /tmp/piwik \
 # Inject settings file here
 COPY config/config.ini.php /var/www/html/config/config.ini.php
 
+# Recommended permissions for Piwik
+RUN chown -R www-data:www-data /var/www/html \
+	&& chmod -R 0755 /var/www/html/tmp
+
 COPY start.sh /root/start.sh
 RUN chmod u+x /root/start.sh
 ENTRYPOINT ["/root/start.sh"]
