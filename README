@@ -7,7 +7,7 @@ To build:
 
 To run:
 
-	docker run -p localhost:9999:80 piwik
+	docker run -p 127.0.0.1:9999:80 piwik
 
 This will expose the app just on the local network, and then Apache can be
 used on the host to proxy it to the outside world.
