@@ -20,8 +20,6 @@ RUN docker-php-ext-install pdo pdo_mysql
 # Minimise the size of the container image
 RUN apt-get clean
 
-EXPOSE 80
-
 # Grab Piwik itself
 RUN mkdir -p /tmp/piwik \
 	&& cd /tmp/piwik \
@@ -31,6 +29,10 @@ RUN mkdir -p /tmp/piwik \
 RUN cd /tmp/piwik \
     && unzip -q /tmp/piwik/piwik.zip \
 	&& cp -R /tmp/piwik/piwik/* /var/www/html
+
+# Port to run service on (added late in file to improve speed of building image should this
+# need to change).
+EXPOSE 9999
 
 # Inject settings file here
 COPY config/config.ini.php /var/www/html/config/config.ini.php
