@@ -30,5 +30,6 @@ RUN cd /tmp/piwik \
 # Inject settings file here
 COPY config/config.ini.php /var/www/html/config/config.ini.php
 
-# -DFOREGROUND means "don't daemonize"
-ENTRYPOINT ["/usr/sbin/apache2", "-DFOREGROUND"]
+COPY start.sh /root/start.sh
+RUN chmod u+x /root/start.sh
+ENTRYPOINT ["/root/start.sh"]
