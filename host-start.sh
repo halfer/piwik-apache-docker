@@ -17,7 +17,7 @@ case `hostname` in
 esac
 
 docker run \
-	-p 127.0.0.1:9999:9999 \
+	-p 127.0.0.1:9999:80 \
 	--add-host=docker:${DOCKER_HOSTIP} \
 	$DOCKER_NETWORK \
 	piwik

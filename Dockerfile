@@ -32,7 +32,7 @@ RUN cd /tmp/piwik \
 
 # Port to run service on (added late in file to improve speed of building image should this
 # need to change).
-EXPOSE 9999
+EXPOSE 80
 
 # Inject settings file here
 COPY config/config.ini.php /var/www/html/config/config.ini.php
