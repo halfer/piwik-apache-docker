@@ -11,3 +11,7 @@ To run:
 
 This will expose the app just on the local network, and then Apache can be
 used on the host to proxy it to the outside world.
+
+To clean up dead images:
+
+	docker images | grep "<none>" | grep "weeks ago" | awk '{print $3}' | xargs docker rmi
