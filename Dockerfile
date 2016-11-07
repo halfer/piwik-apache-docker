@@ -8,27 +8,31 @@
 # Alternatively I could look at the official Piwik image (https://github.com/piwik/docker-piwik)
 # but this needs an NginX front end and MySQL in separate containers, so I think swapping to
 # a more substantial base would be best for now.
+#
+# I tried the official PHP image, but this produces contains of around 550M, way too high. Ubuntu
+# seems to be better, producing a container of around 360M.
 
-FROM php:7.0-apache
+FROM ubuntu
 
-# Install basic machine dependencies
-RUN apt-get update && apt-get install -y wget unzip
+# Needed to turn off errors when installing PHP
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install the required PHP modules using PHP's Docker command
-RUN docker-php-ext-install pdo pdo_mysql
-
-# Minimise the size of the container image
-RUN apt-get clean
+RUN apt-get update \
+	&& apt-get install -y apache2 php php-pdo php-mysql wget unzip \
+	&& apt-get clean autoclean \
+	&& apt-get autoremove -y \
+	&& rm -rf /var/lib/{apt,dpkg,cache,log}/ \
+	&& rm -rf /var/cache \
+	&& rm -rf /var/log/*
 
 # Grab Piwik itself
+# -q on unzip is for "quiet" operation
 RUN mkdir -p /tmp/piwik \
 	&& cd /tmp/piwik \
-	&& wget https://builds.piwik.org/piwik.zip
-
-# -q on unzip is for "quiet" operation
-RUN cd /tmp/piwik \
-    && unzip -q /tmp/piwik/piwik.zip \
-	&& cp -R /tmp/piwik/piwik/* /var/www/html
+	&& wget https://builds.piwik.org/piwik.zip \
+	&& unzip -q /tmp/piwik/piwik.zip \
+	&& cp -R /tmp/piwik/piwik/* /var/www/html \
+	&& rm -rf /tmp/piwik
 
 # Port to run service on (added late in file to improve speed of building image should this
 # need to change).
