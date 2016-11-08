@@ -29,7 +29,7 @@ RUN apt-get update \
 # -q on unzip is for "quiet" operation
 RUN mkdir -p /tmp/piwik \
 	&& cd /tmp/piwik \
-	&& wget https://builds.piwik.org/piwik.zip \
+	&& wget --no-verbose https://builds.piwik.org/piwik.zip \
 	&& unzip -q /tmp/piwik/piwik.zip \
 	&& cp -R /tmp/piwik/piwik/* /var/www/html \
 	&& rm -rf /tmp/piwik
