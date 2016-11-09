@@ -21,8 +21,7 @@ RUN apt-get update \
 	&& apt-get install -y apache2 libapache2-mod-php php-cli php-pdo php-mysql wget unzip \
 	&& apt-get clean autoclean \
 	&& apt-get autoremove -y \
-	&& rm -rf /var/lib/{apt,dpkg,cache,log}/ \
-	&& rm -rf /var/cache
+	&& rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 # Remove any existing holding page sites
 RUN rm -rf /var/www/html/*
