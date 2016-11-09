@@ -18,12 +18,14 @@ FROM ubuntu
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
-	&& apt-get install -y apache2 php php-pdo php-mysql wget unzip \
+	&& apt-get install -y apache2 libapache2-mod-php php-cli php-pdo php-mysql wget unzip \
 	&& apt-get clean autoclean \
 	&& apt-get autoremove -y \
 	&& rm -rf /var/lib/{apt,dpkg,cache,log}/ \
-	&& rm -rf /var/cache \
-	&& rm -rf /var/log/*
+	&& rm -rf /var/cache
+
+# Remove any existing holding page sites
+RUN rm -rf /var/www/html/*
 
 # Grab Piwik itself
 # -q on unzip is for "quiet" operation
@@ -44,6 +46,9 @@ COPY config/config.ini.php /var/www/html/config/config.ini.php
 # Recommended permissions for Piwik
 RUN chown -R www-data:www-data /var/www/html \
 	&& chmod -R 0755 /var/www/html/tmp
+
+# Create lock file dir
+RUN mkdir --parents /var/lock/apache2
 
 COPY container-start.sh /root/container-start.sh
 RUN chmod u+x /root/container-start.sh
