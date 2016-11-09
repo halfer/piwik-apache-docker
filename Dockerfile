@@ -40,6 +40,10 @@ RUN mkdir -p /tmp/piwik \
 # need to change).
 EXPOSE 80
 
+# Configure Apache
+COPY config/server-name.conf /etc/apache2/conf-available/server-name.conf
+RUN cd /etc/apache2/conf-enabled && ln -s ../conf-available/server-name.conf .
+
 # Inject settings file here
 COPY config/config.ini.php /var/www/html/config/config.ini.php
 
