@@ -71,3 +71,4 @@ PluginsInstalled[] = "Heartbeat"
 PluginsInstalled[] = "ProfessionalServices"
 PluginsInstalled[] = "UserId"
 
+PluginsInstalled[] = "DatabaseConfiguration"

@@ -43,8 +43,18 @@ EXPOSE 80
 COPY config/server-name.conf /etc/apache2/conf-available/server-name.conf
 RUN cd /etc/apache2/conf-enabled && ln -s ../conf-available/server-name.conf .
 
+# Set up the database creds plugin
+RUN mkdir /var/www/html/plugins/DatabaseConfiguration
+# @todo Use Git to fetch this from a repo
+COPY DatabaseConfiguration.php /var/www/html/plugins/DatabaseConfiguration/DatabaseConfiguration.php
+
 # Inject settings file here
 COPY config/config.ini.php /var/www/html/config/config.ini.php
+COPY config/global.ini.php.append /tmp/global.ini.php.append
+
+# Append the global config to the existing file (this did not seem to be settable
+# in the standard config file)
+RUN cat /tmp/global.ini.php.append >> /var/www/html/config/global.ini.php
 
 # Recommended permissions for Piwik
 RUN chown -R www-data:www-data /var/www/html \

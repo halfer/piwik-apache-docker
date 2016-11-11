@@ -1,0 +1,4 @@
+; The below is appended to the global.ini.php config file
+
+[Plugins]
+Plugins[] = DatabaseConfiguration
