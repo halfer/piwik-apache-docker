@@ -1,10 +1,10 @@
 ; <?php exit; ?> DO NOT REMOVE THIS LINE
 ; file automatically generated or modified by Piwik; you can manually override the default values in global.ini.php by redefining them in this file.
 [database]
-host = "docker"
-username = "piwik"
-password = "v4367hj2&amp;&amp;&quot;^~~!&amp;&amp;*"
-dbname = "piwik"
+host = ""
+username = ""
+password = ""
+dbname = ""
 
 [General]
 salt = "61a0c0fec3c75eea1fb62a82a72f2b71"
