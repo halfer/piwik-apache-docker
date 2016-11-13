@@ -44,9 +44,13 @@ COPY config/server-name.conf /etc/apache2/conf-available/server-name.conf
 RUN cd /etc/apache2/conf-enabled && ln -s ../conf-available/server-name.conf .
 
 # Set up the database creds plugin
-RUN mkdir /var/www/html/plugins/DatabaseConfiguration
-# @todo Use Git to fetch this from a repo
-COPY DatabaseConfiguration.php /var/www/html/plugins/DatabaseConfiguration/DatabaseConfiguration.php
+RUN mkdir -p /tmp/piwik-db-config \
+	&& cd /tmp/piwik-db-config \
+	&& wget --no-verbose https://github.com/halfer/piwik-database-configuration/archive/v0.1.zip \
+	&& unzip -q /tmp/piwik-db-config/v0.1.zip \
+	&& mkdir /var/www/html/plugins/DatabaseConfiguration \
+	&& cp /tmp/piwik-db-config/piwik-database-configuration-0.1/DatabaseConfiguration.php /var/www/html/plugins/DatabaseConfiguration/ \
+	&& rm -rf /tmp/piwik-db-config
 
 # Inject settings file here
 COPY config/config.ini.php /var/www/html/config/config.ini.php
