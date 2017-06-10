@@ -18,8 +18,8 @@ WORKDIR /var/www/localhost/htdocs
 # Remove default site
 RUN rm -rf /var/www/localhost/htdocs/*
 
-# @todo Swap the unzip/cp for a straight unzip to destination
-# Grab Piwik itself
+# Grab Piwik itself (we can't unzip directly since there's no switches on `unzip`
+# to remove unpack subfolders)
 RUN mkdir -p /tmp/piwik \
 	&& wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik.zip \
 	&& unzip -q /tmp/piwik/piwik.zip -d /tmp/piwik/ \
@@ -30,12 +30,11 @@ RUN mkdir -p /tmp/piwik \
 RUN mkdir -p /run/apache2
 RUN echo "ServerName localhost" > /etc/apache2/conf.d/server-name.conf
 
-# Port to run service on (added late in file to improve speed of building image should this
-# need to change).
+# Port to run service on
 EXPOSE 80
 
-# @todo Swap the unzip/cp for a straight unzip to destination
-# Set up the database creds plugin
+# Set up the database creds plugin (we can't unzip directly since there's no switches
+# on `unzip` to remove unpack subfolders)
 RUN mkdir -p /tmp/piwik-db-config
 RUN wget --no-verbose -O /tmp/piwik-db-config/v0.1.zip https://github.com/halfer/piwik-database-configuration/archive/v0.1.zip \
 	&& unzip -q /tmp/piwik-db-config/v0.1.zip -d /tmp/piwik-db-config \
@@ -60,4 +59,6 @@ RUN chown -R apache:apache . \
 COPY container-start.sh /root/container-start.sh
 RUN chmod u+x /root/container-start.sh
 ENTRYPOINT ["/root/container-start.sh"]
+
+# Useful for debugging
 #ENTRYPOINT ["sleep", "10000"]

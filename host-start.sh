@@ -12,7 +12,7 @@ export DOCKER_HOSTIP=`ifconfig docker0 | grep "inet addr" | cut -d ':' -f 2 | cu
 echo "Connecting to database on Docker host ${DOCKER_HOSTIP}"
 
 docker run \
-	-p 127.0.0.1:9999:80 \
+	-p 127.0.0.1:8082:80 \
 	--add-host=docker:${DOCKER_HOSTIP} \
 	--env-file=config/envs/local \
 	piwik
