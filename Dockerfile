@@ -4,20 +4,25 @@ FROM alpine:3.5
 
 # Do a system update
 RUN apk update
-RUN apk --update add apache2 php7 php7-pdo wget unzip openssl
+# Piwik and Zend_Session require the session extension
+# Piwik requires the php5-json extension
+# Piwik requires a MySQL driver (using PDO for now)
+RUN apk --update add php7-apache2 php7-pdo php7-session php7-json php7-pdo_mysql wget unzip openssl
 
 # Refresh the SSL certs, which seem to be missing
 # @todo I can't imagine there is an alternative to --no-check-certificate?
 RUN wget --no-check-certificate -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
 
-WORKDIR /var/www
+WORKDIR /var/www/localhost/htdocs
 
+# Remove default site
+RUN rm -rf /var/www/localhost/htdocs/*
+
+# @todo Swap the unzip/cp for a straight unzip to destination
 # Grab Piwik itself
-# -q on unzip is for "quiet" operation
 RUN mkdir -p /tmp/piwik \
-	&& cd /tmp/piwik \
-	&& wget --no-verbose https://builds.piwik.org/piwik.zip \
-	&& unzip -q /tmp/piwik/piwik.zip \
+	&& wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik.zip \
+	&& unzip -q /tmp/piwik/piwik.zip -d /tmp/piwik/ \
 	&& cp -R /tmp/piwik/piwik/* . \
 	&& rm -rf /tmp/piwik
 
@@ -29,8 +34,8 @@ RUN echo "ServerName localhost" > /etc/apache2/conf.d/server-name.conf
 # need to change).
 EXPOSE 80
 
+# @todo Swap the unzip/cp for a straight unzip to destination
 # Set up the database creds plugin
-RUN mkdir -p /var/www
 RUN mkdir -p /tmp/piwik-db-config
 RUN wget --no-verbose -O /tmp/piwik-db-config/v0.1.zip https://github.com/halfer/piwik-database-configuration/archive/v0.1.zip \
 	&& unzip -q /tmp/piwik-db-config/v0.1.zip -d /tmp/piwik-db-config \
@@ -54,5 +59,5 @@ RUN chown -R apache:apache . \
 # Create lock file dir
 COPY container-start.sh /root/container-start.sh
 RUN chmod u+x /root/container-start.sh
-#ENTRYPOINT ["/root/container-start.sh"]
-ENTRYPOINT ["sleep", "10000"]
+ENTRYPOINT ["/root/container-start.sh"]
+#ENTRYPOINT ["sleep", "10000"]
