@@ -1,30 +1,16 @@
-# Apache + PHP + Piwik
-#
-# The original intention of this Docker file was to use Alpine, but getting everything running
-# happily on that seems to be a fair bit of work. Instead one perhaps could use this
-# https://github.com/nimmis/docker-alpine-apache-php7 but it is not well-used, so caution may
-# be necessary.
-#
-# Alternatively I could look at the official Piwik image (https://github.com/piwik/docker-piwik)
-# but this needs an NginX front end and MySQL in separate containers, so I think swapping to
-# a more substantial base would be best for now.
-#
-# I tried the official PHP image, but this produces contains of around 550M, way too high. Ubuntu
-# seems to be better, producing a container of around 360M.
+# Apache + PHP + Piwik in Docker
 
-FROM ubuntu
+FROM alpine:3.5
 
-# Needed to turn off errors when installing PHP
-ENV DEBIAN_FRONTEND=noninteractive
+# Do a system update
+RUN apk update
+RUN apk --update add apache2 php7 php7-pdo wget unzip openssl
 
-RUN apt-get update \
-	&& apt-get install -y apache2 libapache2-mod-php php-cli php-pdo php-mysql wget unzip \
-	&& apt-get clean autoclean \
-	&& apt-get autoremove -y \
-	&& rm -rf /var/lib/{apt,dpkg,cache,log}/
+# Refresh the SSL certs, which seem to be missing
+# @todo I can't imagine there is an alternative to --no-check-certificate?
+RUN wget --no-check-certificate -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
 
-# Remove any existing holding page sites
-RUN rm -rf /var/www/html/*
+WORKDIR /var/www
 
 # Grab Piwik itself
 # -q on unzip is for "quiet" operation
@@ -32,41 +18,39 @@ RUN mkdir -p /tmp/piwik \
 	&& cd /tmp/piwik \
 	&& wget --no-verbose https://builds.piwik.org/piwik.zip \
 	&& unzip -q /tmp/piwik/piwik.zip \
-	&& cp -R /tmp/piwik/piwik/* /var/www/html \
+	&& cp -R /tmp/piwik/piwik/* . \
 	&& rm -rf /tmp/piwik
+
+# Prep Apache
+RUN mkdir -p /run/apache2
+RUN echo "ServerName localhost" > /etc/apache2/conf.d/server-name.conf
 
 # Port to run service on (added late in file to improve speed of building image should this
 # need to change).
 EXPOSE 80
 
-# Configure Apache
-COPY config/server-name.conf /etc/apache2/conf-available/server-name.conf
-RUN cd /etc/apache2/conf-enabled && ln -s ../conf-available/server-name.conf .
-
 # Set up the database creds plugin
 RUN mkdir -p /tmp/piwik-db-config \
-	&& cd /tmp/piwik-db-config \
-	&& wget --no-verbose https://github.com/halfer/piwik-database-configuration/archive/v0.1.zip \
+	&& wget --no-verbose -O /tmp/piwik-db-config https://github.com/halfer/piwik-database-configuration/archive/v0.1.zip \
 	&& unzip -q /tmp/piwik-db-config/v0.1.zip \
-	&& mkdir /var/www/html/plugins/DatabaseConfiguration \
-	&& cp /tmp/piwik-db-config/piwik-database-configuration-0.1/DatabaseConfiguration.php /var/www/html/plugins/DatabaseConfiguration/ \
+	&& mkdir plugins/DatabaseConfiguration \
+	&& cp /tmp/piwik-db-config/piwik-database-configuration-0.1/DatabaseConfiguration.php plugins/DatabaseConfiguration/ \
 	&& rm -rf /tmp/piwik-db-config
 
 # Inject settings file here
-COPY config/config.ini.php /var/www/html/config/config.ini.php
+COPY config/config.ini.php config/config.ini.php
 COPY config/global.ini.php.append /tmp/global.ini.php.append
 
 # Append the global config to the existing file (this did not seem to be settable
 # in the standard config file)
-RUN cat /tmp/global.ini.php.append >> /var/www/html/config/global.ini.php
+RUN cat /tmp/global.ini.php.append >> config/global.ini.php
 
 # Recommended permissions for Piwik
-RUN chown -R www-data:www-data /var/www/html \
-	&& chmod -R 0755 /var/www/html/tmp
+RUN chown -R apache:apache . \
+	&& chmod -R 0755 tmp
 
 # Create lock file dir
-RUN mkdir --parents /var/lock/apache2
-
 COPY container-start.sh /root/container-start.sh
 RUN chmod u+x /root/container-start.sh
-ENTRYPOINT ["/root/container-start.sh"]
+#ENTRYPOINT ["/root/container-start.sh"]
+ENTRYPOINT ["sleep", "10000"]
