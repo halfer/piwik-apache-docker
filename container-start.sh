@@ -1,7 +1,4 @@
-#!/bin/bash
-
-# Get default env vars for Apache
-source /etc/apache2/envvars
+#!/bin/sh
 
 # -DFOREGROUND means "don't daemonize"
-/usr/sbin/apache2 -DFOREGROUND
+/usr/sbin/httpd -DFOREGROUND

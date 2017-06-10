@@ -30,10 +30,11 @@ RUN echo "ServerName localhost" > /etc/apache2/conf.d/server-name.conf
 EXPOSE 80
 
 # Set up the database creds plugin
-RUN mkdir -p /tmp/piwik-db-config \
-	&& wget --no-verbose -O /tmp/piwik-db-config https://github.com/halfer/piwik-database-configuration/archive/v0.1.zip \
-	&& unzip -q /tmp/piwik-db-config/v0.1.zip \
-	&& mkdir plugins/DatabaseConfiguration \
+RUN mkdir -p /var/www
+RUN mkdir -p /tmp/piwik-db-config
+RUN wget --no-verbose -O /tmp/piwik-db-config/v0.1.zip https://github.com/halfer/piwik-database-configuration/archive/v0.1.zip \
+	&& unzip -q /tmp/piwik-db-config/v0.1.zip -d /tmp/piwik-db-config \
+	&& mkdir -p plugins/DatabaseConfiguration \
 	&& cp /tmp/piwik-db-config/piwik-database-configuration-0.1/DatabaseConfiguration.php plugins/DatabaseConfiguration/ \
 	&& rm -rf /tmp/piwik-db-config
 
@@ -47,6 +48,7 @@ RUN cat /tmp/global.ini.php.append >> config/global.ini.php
 
 # Recommended permissions for Piwik
 RUN chown -R apache:apache . \
+    && mkdir -p tmp \
 	&& chmod -R 0755 tmp
 
 # Create lock file dir
