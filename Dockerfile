@@ -25,7 +25,7 @@ RUN rm -rf /var/www/localhost/htdocs/*
 # Grab Piwik itself (we can't unzip directly since there's no switches on `unzip`
 # to remove unpack subfolders). Builds are here: https://builds.piwik.org/
 RUN mkdir -p /tmp/piwik \
-	&& wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik-2.17.1.zip \
+	&& wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik-3.0.4.zip \
 	&& unzip -q /tmp/piwik/piwik.zip -d /tmp/piwik/ \
 	&& cp -R /tmp/piwik/piwik/* . \
 	&& rm -rf /tmp/piwik
@@ -50,7 +50,6 @@ RUN wget --no-verbose -O /tmp/piwik-db-config/v0.1.zip https://github.com/halfer
 
 # Inject settings file here
 COPY config/config.ini.php config/config.ini.php
-#COPY config/global.ini.php.append /tmp/global.ini.php.append
 
 # This needs to be injected in the right [] section
 RUN sed -i 's/\[Plugins\]/\[Plugins\]\nPlugins\[\] = DatabaseConfiguration'/ config/global.ini.php
