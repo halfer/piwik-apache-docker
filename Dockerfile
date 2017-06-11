@@ -37,7 +37,8 @@ RUN echo "ServerName localhost" > /etc/apache2/conf.d/server-name.conf
 # Port to run service on
 EXPOSE 80
 
-RUN apk --update add nano
+# Useful for debugging
+#RUN apk --update add nano
 
 # Set up the database creds plugin (we can't unzip directly since there's no switches
 # on `unzip` to remove unpack subfolders)
