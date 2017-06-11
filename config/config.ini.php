@@ -9,7 +9,7 @@ dbname = ""
 [General]
 salt = "61a0c0fec3c75eea1fb62a82a72f2b71"
 trusted_hosts[] = "analytics.jondh.me.uk"
-trusted_hosts[] = "localhost:9999"
+trusted_hosts[] = "localhost:8082"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Login"

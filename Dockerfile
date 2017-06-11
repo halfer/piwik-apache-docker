@@ -23,7 +23,7 @@ WORKDIR /var/www/localhost/htdocs
 RUN rm -rf /var/www/localhost/htdocs/*
 
 # Grab Piwik itself (we can't unzip directly since there's no switches on `unzip`
-# to remove unpack subfolders)
+# to remove unpack subfolders). Builds are here: https://builds.piwik.org/
 RUN mkdir -p /tmp/piwik \
 	&& wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik-2.17.1.zip \
 	&& unzip -q /tmp/piwik/piwik.zip -d /tmp/piwik/ \
@@ -48,16 +48,12 @@ RUN wget --no-verbose -O /tmp/piwik-db-config/v0.1.zip https://github.com/halfer
 	&& cp /tmp/piwik-db-config/piwik-database-configuration-0.1/DatabaseConfiguration.php plugins/DatabaseConfiguration/ \
 	&& rm -rf /tmp/piwik-db-config
 
-# Why does index.php fail with ridiculous RAM requirements?
-# Maybe try an earlier build? https://builds.piwik.org/
-
 # Inject settings file here
-#COPY config/config.ini.php config/config.ini.php
+COPY config/config.ini.php config/config.ini.php
 #COPY config/global.ini.php.append /tmp/global.ini.php.append
 
-# Append the global config to the existing file (this did not seem to be settable
-# in the standard config file)
-#RUN cat /tmp/global.ini.php.append >> config/global.ini.php
+# This needs to be injected in the right [] section
+RUN sed -i 's/\[Plugins\]/\[Plugins\]\nPlugins\[\] = DatabaseConfiguration'/ config/global.ini.php
 
 # Recommended permissions for Piwik
 RUN chown -R apache:apache . \
