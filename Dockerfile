@@ -7,7 +7,11 @@ RUN apk update
 # Piwik and Zend_Session require the session extension
 # Piwik requires the php5-json extension
 # Piwik requires a MySQL driver (using PDO for now)
-RUN apk --update add php7-apache2 php7-pdo php7-session php7-json php7-pdo_mysql wget unzip openssl
+# Piwik outputs error "Call to undefined function Piwik\ctype_alnum"
+# Extensions required in system check: zlib, iconv, mbstring, dom, openssl, gd
+RUN apk --update add php7-apache2 php7-pdo php7-session php7-json php7-pdo_mysql \
+        php7-ctype php7-zlib php7-iconv php7-mbstring php7-dom php7-openssl php7-gd \
+        wget unzip openssl
 
 # Refresh the SSL certs, which seem to be missing
 # @todo I can't imagine there is an alternative to --no-check-certificate?
@@ -21,7 +25,7 @@ RUN rm -rf /var/www/localhost/htdocs/*
 # Grab Piwik itself (we can't unzip directly since there's no switches on `unzip`
 # to remove unpack subfolders)
 RUN mkdir -p /tmp/piwik \
-	&& wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik.zip \
+	&& wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik-2.17.1.zip \
 	&& unzip -q /tmp/piwik/piwik.zip -d /tmp/piwik/ \
 	&& cp -R /tmp/piwik/piwik/* . \
 	&& rm -rf /tmp/piwik
@@ -33,6 +37,8 @@ RUN echo "ServerName localhost" > /etc/apache2/conf.d/server-name.conf
 # Port to run service on
 EXPOSE 80
 
+RUN apk --update add nano
+
 # Set up the database creds plugin (we can't unzip directly since there's no switches
 # on `unzip` to remove unpack subfolders)
 RUN mkdir -p /tmp/piwik-db-config
@@ -42,13 +48,16 @@ RUN wget --no-verbose -O /tmp/piwik-db-config/v0.1.zip https://github.com/halfer
 	&& cp /tmp/piwik-db-config/piwik-database-configuration-0.1/DatabaseConfiguration.php plugins/DatabaseConfiguration/ \
 	&& rm -rf /tmp/piwik-db-config
 
+# Why does index.php fail with ridiculous RAM requirements?
+# Maybe try an earlier build? https://builds.piwik.org/
+
 # Inject settings file here
-COPY config/config.ini.php config/config.ini.php
-COPY config/global.ini.php.append /tmp/global.ini.php.append
+#COPY config/config.ini.php config/config.ini.php
+#COPY config/global.ini.php.append /tmp/global.ini.php.append
 
 # Append the global config to the existing file (this did not seem to be settable
 # in the standard config file)
-RUN cat /tmp/global.ini.php.append >> config/global.ini.php
+#RUN cat /tmp/global.ini.php.append >> config/global.ini.php
 
 # Recommended permissions for Piwik
 RUN chown -R apache:apache . \
