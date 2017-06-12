@@ -1,2 +1,5 @@
 # Ignore IDEs
 /nbproject
+
+# Don't commit any passwords to the repo
+config/envs/*
