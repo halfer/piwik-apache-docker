@@ -11,7 +11,7 @@ prefer to run a MySQL installation on my Docker host, for data safety.
 
 So, this image contains:
 
-* A specific version of Piwik
+* A specific version of Piwik 3.x
 * Apache 2
 * A plugin to connect to a database using environment variables ([see here](https://github.com/halfer/piwik-database-configuration))
 * A detected IP address to connect to a database on the host
