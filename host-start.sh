@@ -8,19 +8,19 @@
 # @todo If there is no parameter passed, throw a fatal error
 # @todo Pass host-side port in a shell parameter?
 
-# Get the host IP address
-export DOCKER_HOSTIP=`ifconfig docker0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1`
-echo "Connecting to database on Docker host ${DOCKER_HOSTIP}"
-
 # Get the envs var file
 BASE_DIR=`dirname $0`
 ENV_FILE=${BASE_DIR}/config/envs/local
 
 # Check the env vars exist
 if [ ! -f ${ENV_FILE} ]; then
-    echo "Environment variables not found"
+    echo "Environment variables not found in '${ENV_FILE}'"
     exit 1
 fi
+
+# Get the host IP address
+export DOCKER_HOSTIP=`ifconfig docker0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1`
+echo "Connecting to database on Docker host ${DOCKER_HOSTIP}"
 
 docker run \
     --publish 127.0.0.1:8082:80 \
