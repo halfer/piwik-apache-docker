@@ -4,17 +4,22 @@
 # public IP, and must be appropriately firewalled from the web, either on a remote server or a
 # development machine.
 #
-# @todo Pass an env file path to this script as a parameter
-# @todo If there is no parameter passed, throw a fatal error
+# We get the env vars from a build location (this contains passwords, which must not
+# be committed to the repo). This is not a foolproof check, as the folder could
+# still fail to contain the file required by the 'host-start.sh' script.
+#
 # @todo Pass host-side port in a shell parameter?
 
-# Get the envs var file
-BASE_DIR=`dirname $0`
-ENV_FILE=${BASE_DIR}/config/envs/local
+# Check we have the right number of params
+if [ "$#" -ne 1 ]; then
+    echo "Error: needs a parameter for the location of an environment vars file (see config/envs/local.example)"
+    exit 1
+fi
 
 # Check the env vars exist
+ENV_FILE=$1
 if [ ! -f ${ENV_FILE} ]; then
-    echo "Environment variables not found in '${ENV_FILE}'"
+    echo "Environment variables file not found in '${ENV_FILE}'"
     exit 1
 fi
 
@@ -25,7 +30,7 @@ echo "Connecting to database on Docker host ${DOCKER_HOSTIP}"
 docker run \
     --publish 127.0.0.1:8082:80 \
     --add-host=docker:${DOCKER_HOSTIP} \
-    --env-file=config/envs/local \
+    --env-file=${ENV_FILE} \
     --detach \
     --restart always \
     piwik
