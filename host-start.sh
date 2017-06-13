@@ -23,14 +23,20 @@ if [ ! -f ${ENV_FILE} ]; then
     exit 1
 fi
 
+# Gets the FQ path in which this script runs
+RELDIR=`dirname $0`
+BASEDIR=`realpath $RELDIR`
+
 # Get the host IP address
 export DOCKER_HOSTIP=`ifconfig docker0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1`
 echo "Connecting to database on Docker host ${DOCKER_HOSTIP}"
 
+# Adds a host volume for Apache/PHP logs
 docker run \
     --publish 127.0.0.1:8082:80 \
     --add-host=docker:${DOCKER_HOSTIP} \
     --env-file=${ENV_FILE} \
     --detach \
     --restart always \
+    --volume ${BASEDIR}/log:/var/log/apache2 \
     piwik

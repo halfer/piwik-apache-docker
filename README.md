@@ -15,6 +15,7 @@ So, this image contains:
 * Apache 2
 * A plugin to connect to a database using environment variables ([see here](https://github.com/halfer/piwik-database-configuration))
 * A detected IP address to connect to a database on the host
+* A host volume to write Apache/PHP log files to the host
 
 The Dockerfile is based on Alpine 3.5, which uses PHP 7.0. The image comes in at around
 130M in size - not bad, but a bit larger than I would like. I wonder whether swapping
