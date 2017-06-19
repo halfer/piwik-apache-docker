@@ -91,10 +91,10 @@ To clean up dead images:
 
 	docker images | grep "<none>" | grep "weeks ago" | awk '{print $3}' | xargs docker rmi
 
-To save the container image:
+To save the container image (swap version number as appropriate):
 
-    docker save piwik | gzip > piwik.tgz
+    docker save piwik | gzip > piwik-3.0.4-image.tgz
 
-To load the container image:
+To load the container image (swap version number as appropriate):
 
-    docker load < /path/to/images/piwik.tgz
+    docker load < /path/to/images/piwik-3.0.4-image.tgz
