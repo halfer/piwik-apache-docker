@@ -17,6 +17,13 @@ trusted_hosts[] = "127.0.0.1:8082"
 ; Your domain goes here
 trusted_hosts[] = ""
 
+; Uncomment line below if you use a standard proxy
+proxy_client_headers[] = HTTP_X_FORWARDED_FOR
+proxy_host_headers[] = HTTP_X_FORWARDED_HOST
+
+; Assume TLS
+assume_secure_protocol=1
+
 [Plugins]
 Plugins[] = "CorePluginsAdmin"
 Plugins[] = "CoreAdminHome"
