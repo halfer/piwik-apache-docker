@@ -23,6 +23,9 @@ WORKDIR /var/www/localhost/htdocs
 # Remove default site
 RUN rm -rf /var/www/localhost/htdocs/*
 
+# Set up PHP to have a smaller memory limit
+RUN sed -i -r 's/memory_limit = \d+M/memory_limit = 30M/g' /etc/php7/php.ini
+
 # Grab Piwik itself (we can't unzip directly since there's no switches on `unzip`
 # to remove unpack subfolders). Builds are here: https://builds.piwik.org/
 RUN mkdir -p /tmp/piwik \
