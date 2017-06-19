@@ -13,9 +13,9 @@ So, this image contains:
 
 * A specific version of Piwik 3.x
 * Apache 2
-* A plugin to connect to a database using environment variables ([see here](https://github.com/halfer/piwik-database-configuration))
 * A detected IP address to connect to a database on the host
 * A host volume to write Apache/PHP log files to the host
+* A host volume to store the configuration file
 
 The Dockerfile is based on Alpine 3.5, which uses PHP 7.0. The image comes in at around
 130M in size - not bad, but a bit larger than I would like. I wonder whether swapping
@@ -30,14 +30,14 @@ To build the image:
 
 To run:
 
-	./host-start.sh path/to/env-vars-file
+	./host-start.sh
 
 This will expose the app just on the local network, and then Apache can be used on the
 host to proxy it to the outside world.
 
-The environment variable file contains database connection information, see
-[the example](config/envs/local.example). These are usually obtained from a (secret)
-build repository that you maintain for your server(s).
+Your "config-volume" volume should contain a `config.ini.php` file as per the [example
+file](config/config.ini.php.example). You'll need to add in your database configuration
+information, salt and trusted hosts.
 
 The start script contains a few things that are useful to me, but you don't have to use it
 in your own set-up. For example, I like the command to detach and run the container immediately
@@ -90,3 +90,11 @@ To get a shell prompt for debugging:
 To clean up dead images:
 
 	docker images | grep "<none>" | grep "weeks ago" | awk '{print $3}' | xargs docker rmi
+
+To save the container image:
+
+    docker save piwik | gzip > piwik.tgz
+
+To load the container image:
+
+    docker load < /path/to/images/piwik.tgz
