@@ -4,24 +4,13 @@
 # public IP, and must be appropriately firewalled from the web, either on a remote server or a
 # development machine.
 #
-# We get the env vars from a build location (this contains passwords, which must not
-# be committed to the repo). This is not a foolproof check, as the folder could
-# still fail to contain the file required by the 'host-start.sh' script.
+# The configuration file "config.ini.php" should be set up in the shared volume "config-volume"
+# which will then be copied into position when the container starts. This means that,
+# currently, changes to the config will not be reflected immediately. They can either be
+# also edited into config/config.ini.php in the running container, or the container should
+# be restarted.
 #
 # @todo Pass host-side port in a shell parameter?
-
-# Check we have the right number of params
-if [ "$#" -ne 1 ]; then
-    echo "Error: needs a parameter for the location of an environment vars file (see config/envs/local.example)"
-    exit 1
-fi
-
-# Check the env vars exist
-ENV_FILE=$1
-if [ ! -f ${ENV_FILE} ]; then
-    echo "Environment variables file not found in '${ENV_FILE}'"
-    exit 1
-fi
 
 # Gets the FQ path in which this script runs
 RELDIR=`dirname $0`
@@ -35,8 +24,8 @@ echo "Connecting to database on Docker host ${DOCKER_HOSTIP}"
 docker run \
     --publish 127.0.0.1:8082:80 \
     --add-host=docker:${DOCKER_HOSTIP} \
-    --env-file=${ENV_FILE} \
     --detach \
     --restart always \
     --volume ${BASEDIR}/log:/var/log/apache2 \
+    --volume ${BASEDIR}/config-volume:/var/www/localhost/htdocs/config-volume \
     piwik
