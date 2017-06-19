@@ -80,6 +80,16 @@ your certificate keys to suit):
         </VirtualHost>
     </IfModule>
 
+Future improvements
+---
+
+1. There are other files in the config folder, and I wonder if there is any value in
+copying these to the config volume, so any changes written to them are preserved.
+
+2. There is no PHP console binary in this build, since Alpine 3.5 does not support it.
+Perhaps 3.6 has support for this? This would be useful for archiving and other long-
+running operations.
+
 Miscellaneous notes
 ---
 
