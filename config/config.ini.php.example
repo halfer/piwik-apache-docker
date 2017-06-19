@@ -2,18 +2,19 @@
 ; file automatically generated or modified by Piwik; you can manually override the default values in global.ini.php by redefining them in this file.
 [database]
 
-# The "docker" machine is the container's host - you can leave this if you want
-# to connect there.
+; The "docker" machine is the container's host - you can leave this if you want
+; to connect there.
 host = "docker"
 username = ""
 password = ""
 dbname = ""
 
 [General]
-# It's a good idea to randomise this salt value
+; It's a good idea to randomise this salt value
 salt = "61a0effec3c95eea1fbaca82a98f2b12"
 trusted_hosts[] = "localhost:8082"
-# Your domain goes here
+trusted_hosts[] = "127.0.0.1:8082"
+; Your domain goes here
 trusted_hosts[] = ""
 
 [Plugins]
