@@ -1,4 +1,6 @@
 # Apache + PHP + Piwik in Docker
+#
+# @todo Use a multi-stage build to remove wget/unzip/openssl from production build
 
 FROM alpine:3.8
 
@@ -14,6 +16,10 @@ RUN apk --update add \
     php7-ctype php7-zlib php7-iconv php7-mbstring php7-dom php7-openssl php7-gd \
     wget unzip openssl
 RUN apk add ca-certificates
+
+# Add dumb init to improve sig handling (stop time in CircleCI of 10sec is too slow)
+RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64
+RUN chmod +x /usr/local/bin/dumb-init
 
 WORKDIR /var/www/localhost/htdocs
 
@@ -39,9 +45,6 @@ COPY config/mpm.conf /etc/apache2/conf.d/
 # Port to run service on
 EXPOSE 80
 
-# Useful for debugging
-#RUN apk --update add nano
-
 # Recommended permissions for Piwik
 RUN chown -R apache:apache . \
     && mkdir -p tmp \
@@ -49,7 +52,5 @@ RUN chown -R apache:apache . \
 
 COPY container-start.sh /root/container-start.sh
 RUN chmod u+x /root/container-start.sh
-ENTRYPOINT ["/root/container-start.sh"]
-
-# Useful for debugging
-#ENTRYPOINT ["sleep", "10000"]
+ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+CMD ["/root/container-start.sh"]
