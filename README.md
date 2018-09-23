@@ -17,7 +17,7 @@ So, this image contains:
 * A host volume to write Apache/PHP log files to the host
 * A host volume to store the configuration file
 
-The Dockerfile is based on Alpine 3.5, which uses PHP 7.0. The image comes in at around
+The Dockerfile is based on Alpine 3.8, which uses PHP 7.2. The image comes in at around
 130M in size - not bad, but a bit larger than I would like. I wonder whether swapping
 Apache for NginX would help here?
 

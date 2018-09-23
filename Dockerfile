@@ -1,6 +1,6 @@
 # Apache + PHP + Piwik in Docker
 
-FROM alpine:3.5
+FROM alpine:3.8
 
 # Do a system update
 RUN apk update
