@@ -17,8 +17,8 @@ So, this image contains:
 * A host volume to write Apache/PHP log files to the host
 * A host volume to store the configuration file
 
-The Dockerfile is based on Alpine 3.8, which uses PHP 7.2. The image comes in at around
-130M in size - not bad, but a bit larger than I would like. I wonder whether swapping
+The Dockerfile is based on Alpine 3.11, which uses PHP 7.3. The image comes in at around
+140M in size - not bad, but a bit larger than I would like. I wonder whether swapping
 Apache for NginX would help here?
 
 Usage
@@ -79,16 +79,6 @@ your certificate keys to suit):
             Include /etc/letsencrypt/options-ssl-apache.conf
         </VirtualHost>
     </IfModule>
-
-Future improvements
----
-
-1. There are other files in the config folder, and I wonder if there is any value in
-copying these to the config volume, so any changes written to them are preserved.
-
-2. There is no PHP console binary in this build, since Alpine 3.5 does not support it.
-Perhaps 3.6 has support for this? This would be useful for archiving and other long-
-running operations.
 
 Miscellaneous notes
 ---
