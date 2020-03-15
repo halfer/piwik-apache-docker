@@ -2,7 +2,7 @@
 #
 # @todo Use a multi-stage build to remove wget/unzip/openssl from production build
 
-FROM alpine:3.8
+FROM alpine:3.11
 
 # Do a system update
 RUN apk update
