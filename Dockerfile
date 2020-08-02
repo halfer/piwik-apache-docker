@@ -32,7 +32,7 @@ RUN sed -i -r 's/memory_limit = \d+M/memory_limit = 30M/g' /etc/php7/php.ini
 # Grab Piwik itself (we can't unzip directly since there's no switches on `unzip`
 # to remove unpack subfolders). Builds are here: https://builds.piwik.org/
 RUN mkdir -p /tmp/piwik \
-    && wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik-3.13.3.zip \
+    && wget --no-verbose -O /tmp/piwik/piwik.zip https://builds.piwik.org/piwik-3.14.0.zip \
     && unzip -q /tmp/piwik/piwik.zip -d /tmp/piwik/ \
     && cp -R /tmp/piwik/piwik/* . \
     && rm -rf /tmp/piwik
